@@ -8,7 +8,8 @@
   },
   "keywords": [
     "yesbee",
-    "yesbee-cron"
+    "yesbee-cron",
+    "cron"
   ],
   "author": "Farid Hidayat <e.faridhidayat@gmail.com>",
   "license": "MIT",
