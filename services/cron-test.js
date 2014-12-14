@@ -31,11 +31,11 @@
 module.exports = function() {
 
     // cron://[cron name]?[expression= ...[, ...]]
-    var TAG = 'CRON:: ';
-    this.from('cron://cronName?expression=53 4 * * ?')
-        .to(function(exchange) {
-            console.log(TAG, 'do what you want to do bro !.');
-        });
+    // var TAG = 'CRON:: ';
+    // this.from('cron://cronName?expression=53 4 * * ?')
+    //     .to(function(exchange) {
+    //         console.log(TAG, 'do what you want to do bro !.');
+    //     });
 
-    this.trace = true;
+    // this.trace = true;
 };
