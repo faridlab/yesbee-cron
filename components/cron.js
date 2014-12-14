@@ -52,7 +52,8 @@ module.exports = function(yesbee) {
 
             var fnInterval = function() {
                 var exchange = new Exchange();
-                this.LOG.info('Trigger interval %s', new Date() + '');
+                // TODO: uncomment these line below, when yesbee new version is already to use
+                // this.LOG.info('Trigger interval %s', new Date() + '');
                 this.context.send(Channel.IN, this, exchange, this);
 
                 this.timer = setTimeout(fnInterval, this.expression);
@@ -72,7 +73,8 @@ module.exports = function(yesbee) {
                 schedule = later.schedule(s),
                 fn = function() {
                     var exchange = new Exchange();
-                    this.LOG.info('Trigger next cron will be at %s', schedule.next() + '');
+                    // TODO: uncomment these line below, when yesbee new version is already to use
+                    // this.LOG.info('Trigger next cron will be at %s', schedule.next() + '');
                     this.context.send(Channel.IN, this, exchange, this);
                 }.bind(this);
 
@@ -85,7 +87,9 @@ module.exports = function(yesbee) {
                 message += '\n  ' + t;
 
             });
-            this.LOG.info(message);
+
+            // TODO: uncomment these line below, when yesbee new version is already to use
+            // this.LOG.info(message);
 
             if (this.options.immediate) {
                 fn();
