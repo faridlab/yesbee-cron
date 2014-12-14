@@ -33,30 +33,66 @@ var Channel,
     later = require('later');
 
 module.exports = function(yesbee) {
+    "use strict";
 
     Exchange = yesbee.Exchange;
     Channel = yesbee.Channel;
 
-    this.schedule = null;
-    this.start = function() {
+    this.timer = null;
+    this.method = 'interval';
+    this.expression = '';
 
-        if(!this.options.expression) {
-            throw new Error('Cron need one expression.');
+    this.start = function() {
+        if(!this.options.cron && !this.options.text && !this.options.interval) {
+            throw new Error('Need an cron, text, or interval expression');
         }
 
-        var cron = this.options.expression,
-            s = later.parse.cron(cron),
-            timeSched = later.schedule(s).next(),
-            now = new Date().getTime(),
-            that = this,
-            fn = function() {
-                var exchange = new Exchange();
-                that.context.send(Channel.IN, that, exchange, that);
-            };
+        if (this.options.interval) {
+            this.expression = this.options.interval;
 
-        // console.log(timeSched);
-        that.schedule = setTimeout(fn, (timeSched.getTime() - now));
-        // that.schedule = setTimeout(fn, 3000 );
+            var fnInterval = function() {
+                var exchange = new Exchange();
+                this.LOG.info('Trigger interval %s', new Date() + '');
+                this.context.send(Channel.IN, this, exchange, this);
+
+                this.timer = setTimeout(fnInterval, this.expression);
+            }.bind(this);
+
+            if (this.options.immediate) {
+                fnInterval();
+            } else {
+                this.timer = setTimeout(fnInterval, this.expression);
+            }
+
+        } else {
+            this.method = this.options.cron ? 'cron' : 'text';
+            this.expression = this.options.cron || this.options.text;
+
+            var s = later.parse[this.method](this.expression),
+                schedule = later.schedule(s),
+                fn = function() {
+                    var exchange = new Exchange();
+                    this.LOG.info('Trigger next cron will be at %s', schedule.next() + '');
+                    this.context.send(Channel.IN, this, exchange, this);
+                }.bind(this);
+
+            if (!schedule.isValid()) {
+                throw new Error('Expression is not valid [' + this.method + ':' + this.expression + ']');
+            }
+
+            var message = 'Cron scheduled to run at:';
+            schedule.next(5).forEach(function(t) {
+                message += '\n  ' + t;
+
+            });
+            this.LOG.info(message);
+
+            if (this.options.immediate) {
+                fn();
+            }
+            this.timer = later.setInterval(fn, s);
+        }
+
         this.constructor.prototype.start.apply(this, arguments);
 
     };
@@ -64,8 +100,15 @@ module.exports = function(yesbee) {
     // clear timeout
     this.stop = function() {
         this.constructor.prototype.stop.apply(this, arguments);
-        clearTimeout(this.schedule);
-        console.log('stopped');
+
+        if (this.timer) {
+            if (this.method === 'interval') {
+                clearTimeout(this.timer);
+            } else {
+                this.timer.clear();
+            }
+            this.timer = null;
+        }
     };
 
 };
