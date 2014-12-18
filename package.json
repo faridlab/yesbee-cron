@@ -1,6 +1,6 @@
 {
   "name": "yesbee-cron",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Yesbee Cron",
   "main": "index.js",
   "scripts": {

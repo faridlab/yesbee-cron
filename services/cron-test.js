@@ -28,7 +28,7 @@
 * @copyright 2014 PT Sagara Xinix Solusitama
 */
 
-module.exports = function() {
+// module.exports = function() {
 
     // cron://[cron name]?[expression= ...[, ...]]
     // var TAG = 'CRON:: ';
@@ -38,4 +38,4 @@ module.exports = function() {
     //     });
 
     // this.trace = true;
-};
+// };
