@@ -43,6 +43,9 @@ module.exports = function(yesbee) {
     this.expression = '';
 
     this.start = function() {
+
+        console.log('fasdfasdf');
+
         if(!this.options.cron && !this.options.text && !this.options.interval) {
             throw new Error('Need an cron, text, or interval expression');
         }
@@ -69,6 +72,8 @@ module.exports = function(yesbee) {
             this.method = this.options.cron ? 'cron' : 'text';
             this.expression = this.options.cron || this.options.text;
 
+            later.date.localTime();
+
             var s = later.parse[this.method](this.expression),
                 schedule = later.schedule(s),
                 fn = function() {
@@ -77,6 +82,8 @@ module.exports = function(yesbee) {
                     // this.LOG.info('Trigger next cron will be at %s', schedule.next() + '');
                     this.context.send(Channel.IN, this, exchange, this);
                 }.bind(this);
+
+                console.log(schedule.next());
 
             if (!schedule.isValid()) {
                 throw new Error('Expression is not valid [' + this.method + ':' + this.expression + ']');
