@@ -44,8 +44,6 @@ module.exports = function(yesbee) {
 
     this.start = function() {
 
-        console.log('fasdfasdf');
-
         if(!this.options.cron && !this.options.text && !this.options.interval) {
             throw new Error('Need an cron, text, or interval expression');
         }
